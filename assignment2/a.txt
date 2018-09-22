@@ -1,0 +1,210 @@
+
+_______________________________________________
+
+Production Rules
+_______________________________________________
+
+
+statement 	: expression_stmt 
+		  	| compound_stmt
+		  	| constant_stmt
+		  	| conditional_stmt
+		  	| iteration_stmt
+		  	| jump_stmt
+		  	| return
+
+
+expression_stmt	: expression;
+				| ;
+
+
+compound_stmt	: { local_declaration_list }
+				| { stmt_list }
+				| { local_declaration_list stmt_list }
+				| {}
+
+iteration_stmt	: while ( expression ) statement
+					| do statement while ( expression ) ;
+					| for (            ;            ;            ) statement
+					| for (            ;            ; expression ) statement
+					| for (            ; expression ;            ) statement
+					| for (            ; expression ; expression ) statement
+					| for ( expression ;            ;            ) statement
+					| for ( expression ;            ; expression ) statement
+					| for ( expression ; expression ;            ) statement
+					| for ( expression ; expression ; expression ) statement
+
+
+jump_stmt 		: continue ;
+				| break ;
+				| return ;
+				| return expression ;
+
+conditional_stmt	: if ( expression ) statement
+					| if ( expression ) statement else statement
+					| switch ( expression ) statement
+
+constant_stmt 	: int
+				| float
+				| char
+				| id
+
+
+local_declaration_list	: declaration
+						| local_declaration_list declaration
+						| e
+
+declaration : Precessor ID =  Construct_Processor 
+						    | ID
+			| Memory ID =  Construct_Memory
+						 | ID
+			| Link ID =  Construct_Link 
+					   | ID
+			| Job ID = 	Construct_Job 
+					  | ID
+			| Cluster ID =  Construct_Cluster 
+						  | ID
+    		| Global_Scheduler ID = Construct_Global_Scheduler
+    		| Local_Scheduler ID = Construct_Local_Scheduler 
+			| int ID = ID            
+			| float ID = ID 
+			| string ID = ID_STRING
+			| int ID[] = {arg_list}
+			| float ID[] = {arg_list}
+			| Processor ID[] = {CONSTRUCTOR_LIST}
+    		| Local_Scheduler ID[] = {CONSTRUCTOR_LIST}
+			| Cluster ID[] = {CONSTRUCTOR_LIST}
+			| Job ID[] = {CONSTRUCTOR_LIST}
+			| Memory ID[] = {CONSTRUCTOR_LIST}
+			| Link ID[] = {CONSTRUCTOR_LIST}
+			| int ID[INT]
+			| float ID[INT]
+			| Processor ID[INT]
+			| Cluster ID[INT]
+			| Job ID[INT]
+			| Memory ID[INT]
+			| Link ID[INT]
+    		| Local_Scheduler ID[INT]	
+
+arg_list	: arg_list , expression
+			| expression
+
+
+expression 	: ID = simple_expr
+			| ID += simple_expr
+			| ID -= simple_expr
+			| ID *= simple_expr
+			| ID /= simple_expr
+			| simple_expr
+
+
+simple_expr	: ( simple_expr | and_expr | or_expr )
+			| and_expr
+			| or_expr
+
+and_expr	: and_expr && unary_rel_expr
+			| unary_rel_expr
+
+or_expr		: or_expr || unary_rel_expr
+			| unary_rel_expr
+
+unary_rel_expr 	: ! unary_rel_expr
+			   	| rel_expr
+
+rel_expr 	: sum_expr relop sum_expr
+			| sum_expr
+
+relop 		: relational_op
+			| {<=,>=,==,!=}
+
+sum_expr 	: sum_expr sumop term
+			| term
+
+sumop		: +
+			| -
+
+term		: term mulop unary_expr
+			| unary_expr
+
+mulop  		: *
+			| /
+			| %
+
+unary_expr  : unaryop unary_expr
+			| factor
+
+factor		: ID
+			| (expression)
+			| call
+			| constant
+
+call 		: ID (args)
+
+args 		: arg_list
+			| e
+
+constant	: NUMCONSTANT
+			| true
+			| false
+
+conditional_expression 	: or_expr
+						| or_expr ? expression : conditional_expression
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+int main()
+{
+	int j;
+	FILE* fp = fopen("output.txt","w");
+	int ntoken; 
+	ntoken = yylex(); 
+	while(ntoken)
+	{
+		fprintf(fp,"%s",yytext);
+		for(j=yyleng;j<27;j++)
+		{
+		 	fprintf(fp," ");
+		}
+		fprintf(fp,"%s\n\n",token_array[ntoken]); 
+		ntoken = yylex(); 		
+	}
+	fclose(fp); 
+	return 0; 
+}
